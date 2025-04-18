@@ -2,6 +2,7 @@
 
 using Code.Model;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Code;
 
@@ -9,8 +10,16 @@ public class AppDbContext : DbContext
 {
     public DbSet<User> Users { get; set; }
 
+    private readonly IConfiguration _configuration;
+
+    public AppDbContext(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        options.UseSqlServer("Server=localhost,1433;User Id=sa;Password=Code@123;Encrypt=False;TrustServerCertificate=True;");
+        var connectionString = _configuration.GetConnectionString("DefaultConnection");
+        options.UseSqlServer(connectionString);
     }
 }

@@ -17,28 +17,18 @@ class Program
 
         Console.WriteLine("Using connection: " + connectionString);
 
-// Pass connection string to DbContext
-        // using var context = new AppDbContext(connectionString);
+// Use AppDbContext
+        using var context = new AppDbContext(config);
+        context.Database.EnsureCreated(); // Optional: creates DB if not exists
 
-        using (var connection = new SqlConnection(connectionString))
-        {
-            connection.Open();
-            Console.WriteLine("✅ Connected to SQL Server!");
-
-            var command = new SqlCommand("SELECT @@VERSION", connection);
-            var version = command.ExecuteScalar();
-            Console.WriteLine($"SQL Server version: {version}");
-            // for (int i = 0; i < 100000000; i++)
-            {
-                UserCrud();
-            }
-        }
+        Console.WriteLine("✅ Using EF DbContext!");
+        UserCrud(config);
     }
 
-    private static void UserCrud()
+    private static void UserCrud(IConfiguration configuration)
     {
-        using var context = new AppDbContext();
-        var newPerson = new User() { Name = "Alice", Age = 30 };
+        using var context = new AppDbContext(configuration);
+        var newPerson = new User() { Name = "Alice", Age = new Random().Next(21,65)};
         context.Users.Add(newPerson);
         context.SaveChanges();
         Console.WriteLine($"Added: {newPerson.Name}");
@@ -64,7 +54,7 @@ class Program
         var personToDelete = context.Users.Where(u => u.Name == "Alice").ToList();
         foreach (var person in personToDelete)
         {
-            context.Users.Remove(person);
+            // context.Users.Remove(person);
             Console.WriteLine("Deleted Alice."+person.Id);
         }
         context.SaveChanges();
