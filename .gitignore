@@ -75,3 +75,20 @@ _ReSharper*/
 # ⚙️ VSCode
 # =========================
 .vscode/
+
+## Entity Framework Migrations and tools
+[Mm]igrations/*Designer.cs
+[Mm]igrations/*Snapshot.cs
+
+# Don't ignore actual migration .cs files
+!Migrations/*.cs
+
+# Local DB files
+*.mdf
+*.ldf
+
+# Dotnet-ef tool artifacts
+*.dbmdl
+
+# EF Core Scaffolded models (if generated into a specific folder)
+# /Models/Scaffolded/
