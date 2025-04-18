@@ -1,5 +1,6 @@
 ﻿using System.Data.SqlClient;
 using Code.Model;
+using Microsoft.Extensions.Configuration;
 
 namespace Code;
 
@@ -7,7 +8,17 @@ class Program
 {
     static void Main()
     {   
-        string connectionString = "Server=localhost,1433;User Id=sa;Password=Code@123;Encrypt=False;TrustServerCertificate=True;";
+        var builder = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+        IConfiguration config = builder.Build();
+        string connectionString = config.GetConnectionString("DefaultConnection");
+
+        Console.WriteLine("Using connection: " + connectionString);
+
+// Pass connection string to DbContext
+        // using var context = new AppDbContext(connectionString);
 
         using (var connection = new SqlConnection(connectionString))
         {
